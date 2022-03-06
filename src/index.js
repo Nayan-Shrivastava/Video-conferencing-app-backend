@@ -9,3 +9,7 @@ app.listen(config.port, () => {
 app.get('/', (_, res) =>
   res.send('Video Conference Web App backend.\nhealth check : passing'),
 );
+
+app.get('/api/v1', () => {
+  console.log('api v1');
+});
