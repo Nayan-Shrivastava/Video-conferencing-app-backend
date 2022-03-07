@@ -11,5 +11,6 @@ app.get('/', (_, res) =>
 );
 
 app.get('/api/v1', () => {
+  // entrypoint
   console.log('api v1');
 });
