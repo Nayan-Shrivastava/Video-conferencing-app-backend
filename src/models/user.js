@@ -1,115 +1,109 @@
-const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
-const validator = require("validator");
-const bcrypt = require("bcryptjs");
-const { toJSON, generatePassword } = require("../utils/utils");
-const Role = require("../middlewares/auth/role.enum");
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { model, Schema } from 'mongoose';
+import validator from 'validator';
+import { toJSON } from '../utils/utils';
 
-const userSchema = new mongoose.Schema(
+export const userRole = {
+  ADMIN: 'admin',
+  CASHIER: 'cashier',
+  SUPER_ADMIN: 'superadmin',
+};
+
+const userSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     email: {
-      type: String,
-      trim: true,
-      required: true,
       lowercase: true,
-      unique: true,
-      validate(value) {
-        if (!validator.isEmail(value)) {
-          throw new Error("Email is invalid");
-        }
-      },
-    },
-    password: {
-      type: String,
       required: true,
-      minlength: 8,
       trim: true,
-      validate(value) {
-        if (value.toLowerCase().includes("password")) {
-          throw new Error('Password cannot contain "password"');
+      type: String,
+      unique: true,
+      validate: (value) => {
+        if (!validator.isEmail(value)) {
+          throw new Error('Email is invalid');
         }
       },
     },
     gender: {
-      type: String,
       trim: true,
+      type: String,
     },
     mobile: {
-      type: String,
-      trim: true,
-      minlength: 10,
       maxlength: 10,
+      minlength: 10,
+      trim: true,
+      type: String,
+    },
+    name: {
+      required: true,
+      trim: true,
+      type: String,
+    },
+    password: {
+      minlength: 8,
+      required: true,
+      trim: true,
+      type: String,
+      validate: (value) => {
+        if (value.toLowerCase().includes('password')) {
+          throw new Error('Password cannot contain "password"');
+        }
+      },
     },
     role: {
-      type: String,
+      enum: [userRole.admin, userRole.SUPER_ADMIN, userRole.CASHIER],
       required: true,
-      enum: [Role.admin, Role.Superadmin, Role.Cashier],
+      type: String,
     },
     tokens: [
       {
         token: {
-          type: String,
           required: true,
+          type: String,
         },
       },
     ],
   },
   {
     timestamps: true,
-  }
+  },
 );
+export const User = model('User', userSchema);
 
-userSchema.virtual("invoices", {
-  ref: "Invoice",
-  localField: "_id",
-  foreignField: "cashier",
+userSchema.virtual('invoices', {
+  foreignField: 'cashier',
+  localField: '_id',
+  ref: 'Invoice',
 });
 
 userSchema.statics.findByCredentials = async (userId, password) => {
   const user = await User.findById(userId);
 
   if (!user) {
-    throw new Error("invalid creds");
+    throw new Error('invalid creds');
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
-    throw new Error("invalid creds");
+    throw new Error('invalid creds');
   }
 
   return user;
 };
 
-userSchema.methods.generateAuthToken = async function () {
-  const user = this;
-  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET);
-
-  user.tokens = user.tokens.concat({ token });
-  await user.save();
-
+userSchema.methods.generateAuthToken = async () => {
+  const token = jwt.sign({ _id: this._id.toString() }, process.env.JWT_SECRET);
+  this.tokens = this.tokens.concat({ token });
+  await this.save();
   return token;
 };
 
-userSchema.methods.toJSON = function () {
-  return toJSON(this);
-};
+userSchema.methods.toJSON = () => toJSON(this);
 
-userSchema.pre("save", async function (next) {
-  const user = this;
-
-  if (user.isModified("password")) {
-    user.password = await bcrypt.hash(user.password, 8);
+userSchema.pre('save', async (next) => {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 8);
   }
-
   next();
 });
-
-const User = mongoose.model("User", userSchema);
-
-module.exports = User;

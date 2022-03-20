@@ -1,56 +1,53 @@
-const User = require("../models/user");
-const express = require("express");
-const router = new express.Router();
-const { responseHandler } = require("../utils/responseHandler");
+import { User, userRole } from '../models/user';
+import { responseHandler } from '../utils/responseHandler';
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const user = await User.findByCredentials(
       req.body.userId,
-      req.body.password
+      req.body.password,
     );
-
     const token = await user.generateAuthToken();
-    responseHandler(req, res, 200, undefined, { user, token });
+    responseHandler(req, res, 200, null, { token, user });
   } catch (e) {
     responseHandler(req, res, 400, e);
   }
 };
 
-const createUser = async (req, res) => {
+export const createUser = async (req, res) => {
   const user = new User(req.body);
   if (
-    user.role !== Role.Superadmin &&
-    user.role !== Role.Admin &&
-    user.role !== Role.Cashier
+    user.role !== userRole.Superadmin &&
+    user.role !== userRole.Admin &&
+    user.role !== userRole.Cashier
   ) {
     responseHandler(req, res, 400, `${user.role} is not a valid role`);
   }
   try {
     if (
-      user.role === Role.Superadmin ||
-      (user.role === Role.Admin && req.user.role !== Role.Superadmin)
+      user.role === userRole.Superadmin ||
+      (user.role === userRole.Admin && req.user.role !== userRole.Superadmin)
     ) {
       responseHandler(req, res, 403);
     }
     user.changedDefaultPassword = false;
     await user.save();
     if (user.email) {
-      //sendWelcomeEmail(user.email, user.name);
+      // sendWelcomeEmail(user.email, user.name);
     }
 
-    responseHandler(req, res, 201, undefined, { user });
+    responseHandler(req, res, 201, null, { user });
   } catch (e) {
     responseHandler(req, res, 400, e);
   }
 };
 
-const resetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
   try {
-    const newPassword = req.body.newPassword;
+    const { newPassword } = req.body;
     const user = await User.findByCredentials(
       req.body.userId,
-      req.body.password
+      req.body.password,
     );
 
     // reflecting that password has been reset once
@@ -65,7 +62,7 @@ const resetPassword = async (req, res) => {
   }
 };
 
-const getUserById = async (req, res) => {
+export const getUserById = async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId);
@@ -75,19 +72,19 @@ const getUserById = async (req, res) => {
     }
 
     if (
-      user.role === Role.Superadmin ||
-      (user.role === Role.Admin && req.user.role !== Role.Superadmin)
+      user.role === userRole.Superadmin ||
+      (user.role === userRole.Admin && req.user.role !== userRole.Superadmin)
     ) {
       responseHandler(req, res, 403);
     }
 
-    responseHandler(req, res, 200, undefined, { user });
+    responseHandler(req, res, 200, null, { user });
   } catch (e) {
     responseHandler(req, res, 500);
   }
 };
 
-const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     const userId = req.params.id;
     let user = await User.findById(userId);
@@ -97,18 +94,16 @@ const deleteUser = async (req, res) => {
     }
 
     if (
-      user.role === Role.Superadmin ||
-      (user.role === Role.Admin && req.user.role !== Role.Superadmin)
+      user.role === userRole.Superadmin ||
+      (user.role === userRole.Admin && req.user.role !== userRole.Superadmin)
     ) {
       responseHandler(req, res, 403);
     }
 
     user = await User.findOneAndDelete({ _id: userId });
 
-    responseHandler(req, res, 200, undefined, { user });
+    responseHandler(req, res, 200, null, { user });
   } catch (e) {
     responseHandler(req, res, 500, e);
   }
 };
-
-module.exports = { createUser, login, getUserById, deleteUser, resetPassword };

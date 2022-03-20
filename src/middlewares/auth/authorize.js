@@ -1,15 +1,13 @@
-const {
-  errorResponses,
-  messageResponses,
-  responseHandler,
-} = require("../../utils/responseHandler");
-const hasRole = (roles = []) => {
-  if (typeof roles === "string") {
-    roles = [roles];
+import { responseHandler } from '../../utils/responseHandler';
+
+export const hasRole = (roles = []) => {
+  let roleList = roles;
+  if (typeof roleList === 'string') {
+    roleList = [roleList];
   }
 
   return (req, res, next) => {
-    if (roles.length !== 0 && !roles.includes(req.user.role)) {
+    if (roleList.length !== 0 && !roleList.includes(req.user.role)) {
       // user's role is not authorized
       responseHandler(req, res, 401);
     }
@@ -18,5 +16,3 @@ const hasRole = (roles = []) => {
     next();
   };
 };
-
-module.exports = hasRole;

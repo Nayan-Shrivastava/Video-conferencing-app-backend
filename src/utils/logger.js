@@ -1,25 +1,32 @@
-const { format, createLogger, transports } = require('winston');
+import { format, createLogger, transports } from 'winston';
+
 const { timestamp, combine, errors, printf } = format;
 
-const logFormat = printf(({ level, timestamp, message, stack }) => {
-	return `${timestamp}  ${level}  ${message || stack}`;
-});
+const logFormat = printf(
+  ({ level, timestamp, message, stack }) =>
+    `${timestamp}  ${level}  ${message || stack}`,
+);
 
-const logger = createLogger({
-	format: combine(timestamp(), errors({ stack: true }), logFormat, format.colorize()),
-	transports: [
-		new transports.File({ filename: 'logs/complete.log' }),
-		new transports.File({ filename: 'logs/error.log', level: 'error' })
-	]
+const loghelper = createLogger({
+  format: combine(
+    timestamp(),
+    errors({ stack: true }),
+    logFormat,
+    format.colorize(),
+  ),
+  transports: [
+    new transports.File({ filename: 'logs/complete.log' }),
+    new transports.File({ filename: 'logs/error.log', level: 'error' }),
+  ],
 });
 
 const logHandler = {
-	log(level, message) {
-		logger.log({ level, message });
-	},
-	error(level, message) {
-		logger.error({ level, message });
-	}
+  error(level, message) {
+    loghelper.error({ level, message });
+  },
+  log(level, message) {
+    loghelper.log({ level, message });
+  },
 };
 
-module.exports = {logger: logHandler};
+export const logger = logHandler;

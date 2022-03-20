@@ -1,44 +1,38 @@
-const User = require("../models/user");
-const express = require("express");
-const router = new express.Router();
-const {
-  errorResponses,
-  messageResponses,
-  responseHandler,
-} = require("../utils/responseHandler");
-const auth = require("../middlewares/auth/authenticate");
-const hasRole = require("../middlewares/auth/authorize");
-const Role = require("../middlewares/auth/role.enum");
-const {
-  login,
+import express from 'express';
+import {
   createUser,
-  resetPassword,
   deleteUser,
   getUserById,
-} = require("../controllers/user");
-router.post("/login", login);
+  login,
+  resetPassword,
+} from '../controllers/user';
+import { authenticate, hasRole } from '../middlewares/auth';
+import { userRole } from '../models/user';
 
-router.post(
-  "/create-user",
-  auth,
-  hasRole([Role.Superadmin, Role.Admin]),
-  createUser
+const userRouter = new express.Router();
+
+userRouter.post('/login', login);
+userRouter.post(
+  '/create-user',
+  authenticate,
+  hasRole([userRole.SUPER_ADMIN, userRole.ADMIN]),
+  createUser,
 );
 
-router.post("/reset-password", resetPassword);
+userRouter.post('/reset-password', resetPassword);
 
-router.get(
-  "/get-user/:id",
-  auth,
-  hasRole([Role.Superadmin, Role.Admin]),
-  getUserById
+userRouter.get(
+  '/get-user/:id',
+  authenticate,
+  hasRole([userRole.SUPER_ADMIN, userRole.ADMIN]),
+  getUserById,
 );
 
-router.delete(
-  "/delete-user/:id",
-  auth,
-  hasRole([Role.Superadmin, Role.Admin]),
-  deleteUser
+userRouter.delete(
+  '/delete-user/:id',
+  authenticate,
+  hasRole([userRole.SUPER_ADMIN, userRole.ADMIN]),
+  deleteUser,
 );
 
-module.exports = router;
+export { userRouter };

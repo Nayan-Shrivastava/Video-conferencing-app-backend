@@ -16,11 +16,8 @@ const toJSON = (obj) => {
 };
 
 const generatePassword = () => {
-  let pwd = (Math.random() + 1).toString(36).substring(2);
+  const pwd = (Math.random() + 1).toString(36).substring(2);
   return pwd;
 };
 
-module.exports = {
-  toJSON,
-  generatePassword,
-};
+export { generatePassword, toJSON };
