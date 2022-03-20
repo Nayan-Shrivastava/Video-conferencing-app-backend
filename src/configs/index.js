@@ -1,9 +1,10 @@
 import dotenv from 'dotenv';
+import dbConfig from './db';
 
 dotenv.config();
 
 const config = {
-  mongoDBUrl: process.env.MONGODB_URL,
-  port: process.env.PORT ?? 8080,
+  db: dbConfig,
+  port: process.env.PORT ?? 3000,
 };
 export default config;
