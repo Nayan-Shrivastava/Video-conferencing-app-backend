@@ -22,9 +22,7 @@ export const responseHandler = async (req, res, code, error, message) => {
         `${req.originalUrl} ${code}  ${JSON.stringify(error)}`,
       );
     } else if (message) {
-      typeof message === 'string'
-        ? res.status(code).send({ message })
-        : res.status(code).send({ message });
+      res.status(code).send(message);
       logger.log(
         'info',
         `${req.originalUrl} ${code}  ${JSON.stringify(message)}`,
@@ -44,8 +42,9 @@ export const responseHandler = async (req, res, code, error, message) => {
     } else {
       res.status(code).send();
     }
-    throw new Error();
+    // throw new Error();
   } catch (err) {
-    logger.err(err);
+    console.log(err);
+    logger.error(err);
   }
 };

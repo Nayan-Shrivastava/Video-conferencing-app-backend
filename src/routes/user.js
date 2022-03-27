@@ -5,20 +5,16 @@ import {
   getUserById,
   login,
   resetPassword,
+  getAllUsers,
 } from '../controllers/user';
 import { authenticate, hasRole } from '../middlewares/auth';
 import { userRole } from '../models/user';
 
 const userRouter = new express.Router();
 
+userRouter.get('/', getAllUsers);
 userRouter.post('/login', login);
-userRouter.post(
-  '/create-user',
-  authenticate,
-  hasRole([userRole.SUPER_ADMIN, userRole.ADMIN]),
-  createUser,
-);
-
+userRouter.post('/signup', createUser);
 userRouter.post('/reset-password', resetPassword);
 
 userRouter.get(

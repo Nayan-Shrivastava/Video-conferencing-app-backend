@@ -24,16 +24,6 @@ const userSchema = new Schema(
         }
       },
     },
-    gender: {
-      trim: true,
-      type: String,
-    },
-    mobile: {
-      maxlength: 10,
-      minlength: 10,
-      trim: true,
-      type: String,
-    },
     name: {
       required: true,
       trim: true,
@@ -50,11 +40,6 @@ const userSchema = new Schema(
         }
       },
     },
-    role: {
-      enum: [userRole.admin, userRole.SUPER_ADMIN, userRole.CASHIER],
-      required: true,
-      type: String,
-    },
     tokens: [
       {
         token: {
@@ -68,7 +53,6 @@ const userSchema = new Schema(
     timestamps: true,
   },
 );
-export const User = model('User', userSchema);
 
 userSchema.virtual('invoices', {
   foreignField: 'cashier',
@@ -76,34 +60,15 @@ userSchema.virtual('invoices', {
   ref: 'Invoice',
 });
 
-userSchema.statics.findByCredentials = async (userId, password) => {
-  const user = await User.findById(userId);
+// userSchema.methods.toJSON = () => toJSON(this);
 
-  if (!user) {
-    throw new Error('invalid creds');
-  }
+/*
+ * userSchema.pre('save', async (next) => {
+ *   if (this.isModified('password')) {
+ *     this.password = await bcrypt.hash(this.password, 8);
+ *   }
+ *   next();
+ * });
+ */
 
-  const isMatch = await bcrypt.compare(password, user.password);
-
-  if (!isMatch) {
-    throw new Error('invalid creds');
-  }
-
-  return user;
-};
-
-userSchema.methods.generateAuthToken = async () => {
-  const token = jwt.sign({ _id: this._id.toString() }, process.env.JWT_SECRET);
-  this.tokens = this.tokens.concat({ token });
-  await this.save();
-  return token;
-};
-
-userSchema.methods.toJSON = () => toJSON(this);
-
-userSchema.pre('save', async (next) => {
-  if (this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password, 8);
-  }
-  next();
-});
+export const User = model('User', userSchema);

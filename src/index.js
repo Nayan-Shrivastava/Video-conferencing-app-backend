@@ -23,3 +23,40 @@ app.get('/', (_, res) =>
 app.use('/api/v1', rootRouter);
 
 logger.log('info', '**** server started ****');
+
+function split(thing) {
+  if (typeof thing === 'string') {
+    return thing.split('/');
+  }
+  if (thing.fast_slash) {
+    return '';
+  }
+  const match = thing
+    .toString()
+    .replace('\\/?', '')
+    .replace('(?=\\/|$)', '$')
+    .match(/^\/\^((?:\\[.*+?^${}()|[\]\\/]|[^.*+?^${}()|[\]\\/])*)\$\//u);
+  return match
+    ? match[1].replace(/\\(.)/gu, '$1').split('/')
+    : `<complex:${thing.toString()}>`;
+}
+
+function printRoutes(path, layer) {
+  if (layer.route) {
+    layer.route.stack.forEach(
+      printRoutes.bind(null, path.concat(split(layer.route.path))),
+    );
+  } else if (layer.name === 'router' && layer.handle.stack) {
+    layer.handle.stack.forEach(
+      printRoutes.bind(null, path.concat(split(layer.regexp))),
+    );
+  } else if (layer.method) {
+    // eslint-disable-next-line no-console
+    console.log(
+      '%s /%s',
+      layer.method.toUpperCase().padEnd(10),
+      path.concat(split(layer.regexp)).filter(Boolean).join('/'),
+    );
+  }
+}
+app._router.stack.forEach(printRoutes.bind(null, []));
