@@ -1,5 +1,5 @@
 const toJSON = (obj) => {
-  const newObj = obj.toObject();
+  const newObj = obj?.toObject?.() ?? obj;
 
   if (newObj.password) {
     delete newObj.password;

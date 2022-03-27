@@ -175,7 +175,6 @@
     "no-multiple-empty-lines": "error",
     "no-nested-ternary": "warn",
     "no-new": "error",
-    "no-param-reassign": "error",
     "no-promise-executor-return": "error",
     "no-return-assign": "error",
     "no-self-compare": "error",
