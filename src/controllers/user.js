@@ -16,7 +16,7 @@ export const login = async (req, res) => {
     const user = await userService.findByCredentials(userEmail, password);
     const token = await userService.generateAuthToken(user);
     const { _id, email, name, createdAt } = user;
-    const message = { _id, createdAt, email, name, token };
+    const message = { _id, createdAt, email, name, success: true, token };
     responseHandler(req, res, 200, null, message);
   } catch (e) {
     responseHandler(req, res, 400, e);
