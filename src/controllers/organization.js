@@ -24,6 +24,21 @@ export const createOrganization = async (req, res) => {
   }
 };
 
+export const deleteOrganization = async (req, res) => {
+  try {
+    const { orgId } = req.body;
+    const org = await Organization.findById(orgId);
+    if (org.admin != req.user.id) {
+      responseHandler(req, res, 403, null);
+    } else {
+      org.remove();
+      responseHandler(req, res, 200, null);
+    }
+  } catch (e) {
+    responseHandler(req, res, 400, e);
+  }
+};
+
 export const addMember = async (req, res) => {
   try {
     const { userId, orgId } = req.body;
