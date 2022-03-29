@@ -1,14 +1,16 @@
 import { verify } from 'jsonwebtoken';
 import { responseHandler } from '../../utils/responseHandler';
 import { User } from '../../models/user';
+import config from '../../configs/index';
 
 export const authenticate = async (req, res, next) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
-    const decoded = verify(token, process.env.JWT_SECRET);
+    const decoded = verify(token, config.jwtSecret);
+    // TODO: need to modify auth token to include _id
     const user = await User.findOne({
       _id: decoded._id,
-      'tokens.token': token,
+      // 'tokens.token': token,
     });
 
     if (!user) {

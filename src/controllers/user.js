@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { User, userRole } from '../models/user';
+import { User } from '../models/user';
 import { responseHandler } from '../utils/responseHandler';
 import userService from '../services/user';
 /**
@@ -73,13 +73,6 @@ export const getUserById = async (req, res) => {
       responseHandler(req, res, 404);
     }
 
-    if (
-      user.role === userRole.Superadmin ||
-      (user.role === userRole.Admin && req.user.role !== userRole.Superadmin)
-    ) {
-      responseHandler(req, res, 403);
-    }
-
     responseHandler(req, res, 200, null, { user });
   } catch (e) {
     responseHandler(req, res, 500);
@@ -93,13 +86,6 @@ export const deleteUser = async (req, res) => {
 
     if (!user) {
       responseHandler(req, res, 404);
-    }
-
-    if (
-      user.role === userRole.Superadmin ||
-      (user.role === userRole.Admin && req.user.role !== userRole.Superadmin)
-    ) {
-      responseHandler(req, res, 403);
     }
 
     user = await User.findOneAndDelete({ _id: userId });

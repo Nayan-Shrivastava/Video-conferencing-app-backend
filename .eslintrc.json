@@ -121,7 +121,7 @@
     "dot-location": "error",
     "dot-notation": "off",
     "eol-last": "error",
-    "eqeqeq": "error",
+    "eqeqeq": "warn",
     "function-call-argument-newline": "error",
     "generator-star-spacing": "error",
     "import/extensions": [

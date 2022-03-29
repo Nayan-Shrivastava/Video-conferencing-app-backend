@@ -8,8 +8,7 @@ import {
   getAllUsers,
   loginWithGoogle,
 } from '../controllers/user';
-import { authenticate, hasRole } from '../middlewares/auth';
-import { userRole } from '../models/user';
+import { authenticate } from '../middlewares/auth';
 
 const userRouter = new express.Router();
 
@@ -19,18 +18,8 @@ userRouter.post('/signup', createUser);
 userRouter.post('/reset-password', resetPassword);
 userRouter.post('/auth/google', loginWithGoogle);
 
-userRouter.get(
-  '/get-user/:id',
-  authenticate,
-  hasRole([userRole.SUPER_ADMIN, userRole.ADMIN]),
-  getUserById,
-);
+userRouter.get('/get-user/:id', authenticate, getUserById);
 
-userRouter.delete(
-  '/delete-user/:id',
-  authenticate,
-  hasRole([userRole.SUPER_ADMIN, userRole.ADMIN]),
-  deleteUser,
-);
+userRouter.delete('/delete-user/:id', authenticate, deleteUser);
 
 export { userRouter };

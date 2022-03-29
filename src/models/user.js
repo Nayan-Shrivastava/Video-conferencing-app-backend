@@ -1,12 +1,6 @@
 import { model, Schema } from 'mongoose';
 import validator from 'validator';
 
-export const userRole = {
-  ADMIN: 'admin',
-  CASHIER: 'cashier',
-  SUPER_ADMIN: 'superadmin',
-};
-
 const userSchema = new Schema(
   {
     email: {
@@ -52,22 +46,5 @@ const userSchema = new Schema(
     timestamps: true,
   },
 );
-
-userSchema.virtual('invoices', {
-  foreignField: 'cashier',
-  localField: '_id',
-  ref: 'Invoice',
-});
-
-// userSchema.methods.toJSON = () => toJSON(this);
-
-/*
- * userSchema.pre('save', async (next) => {
- *   if (this.isModified('password')) {
- *     this.password = await bcrypt.hash(this.password, 8);
- *   }
- *   next();
- * });
- */
 
 export const User = model('User', userSchema);
