@@ -1,8 +1,5 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { model, Schema } from 'mongoose';
 import validator from 'validator';
-import { toJSON } from '../utils/utils';
 
 export const userRole = {
   ADMIN: 'admin',
@@ -24,6 +21,9 @@ const userSchema = new Schema(
         }
       },
     },
+    imageUrl: {
+      type: String,
+    },
     name: {
       required: true,
       trim: true,
@@ -31,7 +31,6 @@ const userSchema = new Schema(
     },
     password: {
       minlength: 8,
-      required: true,
       trim: true,
       type: String,
       validate: (value) => {

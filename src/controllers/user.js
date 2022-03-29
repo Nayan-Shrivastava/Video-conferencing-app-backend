@@ -118,3 +118,26 @@ export const getAllUsers = async (req, res) => {
     responseHandler(req, res, 500, e);
   }
 };
+
+/**
+ * POST /api/v1/user/auth/google
+ * @example
+ * body: {
+ *  email: 'abc@xyz.com'
+ *  name: 'defgh'
+ *  imageUrl: 'https://image-url.authgoogle.com'
+ *  token: 'eowefuUerldfmwle.ekrowmkfsUerd.....f.owUiefdwlerlesdurews'
+ * }
+ */
+export const loginWithGoogle = async (req, res) => {
+  try {
+    const { email, name, imageUrl, token } = req.body;
+    const user = await User.findOneAndUpdate(
+      { email },
+      { $push: { tokens: token }, email, imageUrl, name },
+    );
+    responseHandler(req, res, 200, null, { user });
+  } catch (e) {
+    responseHandler(req, res, 500, e);
+  }
+};

@@ -6,6 +6,7 @@ import {
   login,
   resetPassword,
   getAllUsers,
+  loginWithGoogle,
 } from '../controllers/user';
 import { authenticate, hasRole } from '../middlewares/auth';
 import { userRole } from '../models/user';
@@ -16,6 +17,7 @@ userRouter.get('/', getAllUsers);
 userRouter.post('/login', login);
 userRouter.post('/signup', createUser);
 userRouter.post('/reset-password', resetPassword);
+userRouter.post('/auth/google', loginWithGoogle);
 
 userRouter.get(
   '/get-user/:id',

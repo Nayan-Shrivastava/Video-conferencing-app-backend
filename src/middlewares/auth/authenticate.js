@@ -14,7 +14,6 @@ export const authenticate = async (req, res, next) => {
     if (!user) {
       responseHandler(req, res, 404);
     }
-
     req.token = token;
     req.user = user;
     next();
