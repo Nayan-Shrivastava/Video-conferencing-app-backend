@@ -10,27 +10,31 @@ io.on('connection', (socket) => {
   console.log('socket established');
   socket.on('join-room', (userData) => {
     const { roomID, userID } = userData;
+    console.log('new user joined', userData);
     socket.join(roomID);
-    socket.to(roomID).broadcast?.emit('new-user-connect', userData);
+    socket.to(roomID).emit('new-user-connect', userData);
     socket.on('disconnect', () => {
-      socket.to(roomID).broadcast?.emit('user-disconnected', userID);
+      console.log('user-disconnected', userID);
+      socket.to(roomID).emit('user-disconnected', userID);
     });
     socket.on('broadcast-message', (message) => {
       socket
         .to(roomID)
-        .broadcast.emit('new-broadcast-messsage', { ...message, userData });
+        .emit('new-broadcast-messsage', { ...message, userData });
     });
     /*
      * socket.on('reconnect-user', () => {
      *     socket.to(roomID).broadcast.emit('new-user-connect', userData);
      * });
      */
-    socket.on('display-media', (value) => {
-      socket.to(roomID).broadcast.emit('display-media', { userID, value });
-    });
-    socket.on('user-video-off', (value) => {
-      socket.to(roomID).broadcast.emit('user-video-off', value);
-    });
+    /*
+     * socket.on('display-media', (value) => {
+     *   socket.to(roomID).broadcast.emit('display-media', { userID, value });
+     * });
+     * socket.on('user-video-off', (value) => {
+     *   socket.to(roomID).broadcast.emit('user-video-off', value);
+     * });
+     */
   });
 });
 export { meetRouter };
