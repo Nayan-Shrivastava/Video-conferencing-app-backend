@@ -15,6 +15,9 @@ const userSchema = new Schema(
         }
       },
     },
+    imageUrl: {
+      type: String,
+    },
     name: {
       required: true,
       trim: true,
@@ -22,7 +25,6 @@ const userSchema = new Schema(
     },
     password: {
       minlength: 8,
-      required: true,
       trim: true,
       type: String,
       validate: (value) => {

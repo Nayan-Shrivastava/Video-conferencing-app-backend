@@ -73,15 +73,6 @@ export const getUserById = async (req, res) => {
       responseHandler(req, res, 404);
     }
 
-    /*
-     * if (
-     *   user.role === userRole.Superadmin ||
-     *   (user.role === userRole.Admin && req.user.role !== userRole.Superadmin)
-     * ) {
-     *   responseHandler(req, res, 403);
-     * }
-     */
-
     responseHandler(req, res, 200, null, { user });
   } catch (e) {
     responseHandler(req, res, 500);
@@ -97,15 +88,6 @@ export const deleteUser = async (req, res) => {
       responseHandler(req, res, 404);
     }
 
-    /*
-     * if (
-     *   user.role === userRole.Superadmin ||
-     *   (user.role === userRole.Admin && req.user.role !== userRole.Superadmin)
-     * ) {
-     *   responseHandler(req, res, 403);
-     * }
-     */
-
     user = await User.findOneAndDelete({ _id: userId });
 
     responseHandler(req, res, 200, null, { user });
@@ -118,6 +100,29 @@ export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({}, ['-password', '-tokens', '-__v']);
     responseHandler(req, res, 200, null, { users });
+  } catch (e) {
+    responseHandler(req, res, 500, e);
+  }
+};
+
+/**
+ * POST /api/v1/user/auth/google
+ * @example
+ * body: {
+ *  email: 'abc@xyz.com'
+ *  name: 'defgh'
+ *  imageUrl: 'https://image-url.authgoogle.com'
+ *  token: 'eowefuUerldfmwle.ekrowmkfsUerd.....f.owUiefdwlerlesdurews'
+ * }
+ */
+export const loginWithGoogle = async (req, res) => {
+  try {
+    const { email, name, imageUrl, token } = req.body;
+    const user = await User.findOneAndUpdate(
+      { email },
+      { $push: { tokens: token }, email, imageUrl, name },
+    );
+    responseHandler(req, res, 200, null, { user });
   } catch (e) {
     responseHandler(req, res, 500, e);
   }

@@ -7,19 +7,19 @@ export const authenticate = async (req, res, next) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
     const decoded = verify(token, config.jwtSecret);
+    // TODO: need to modify auth token to include _id
     const user = await User.findOne({
       _id: decoded._id,
+      // 'tokens.token': token,
     });
 
     if (!user) {
       responseHandler(req, res, 404);
     }
-
     req.token = token;
     req.user = user;
     next();
   } catch (e) {
-    console.log(e);
     responseHandler(req, res, 401);
   }
 };
