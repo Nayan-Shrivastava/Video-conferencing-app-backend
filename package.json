@@ -49,7 +49,7 @@
     "url": "git+https://github.com/Ashuto7h/Video-conferencing-app-backend.git"
   },
   "scripts": {
-    "build": "npm-run-all clean tsc",
+    "build": "npx npm-run-all clean tsc",
     "clean": "rimraf dist/*",
     "dev": "nodemon --watch './src/**/*' --exec npm start",
     "eslint": "eslint src/",
