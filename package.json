@@ -15,7 +15,9 @@
     "peer": "^0.6.1",
     "socket.io": "^4.4.1",
     "validator": "^13.7.0",
-    "winston": "^3.6.0"
+    "winston": "^3.6.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.5.2"
   },
   "description": "",
   "devDependencies": {
@@ -34,9 +36,7 @@
     "eslint-plugin-standard": "^5.0.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.3.5",
-    "prettier": "^2.5.1",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.5.2"
+    "prettier": "^2.5.1"
   },
   "engines": {
     "node": "16.13.0"
