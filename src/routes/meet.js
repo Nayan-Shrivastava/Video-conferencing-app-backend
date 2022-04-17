@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { createNewMeet } from '../controllers/meet';
 import { getIO } from '../socketInstance';
+import { getTimeStamp } from '../utils/utils';
 
 const meetRouter = new Router();
 const io = getIO();
@@ -15,12 +16,14 @@ io.on('connection', (socket) => {
     socket.to(roomID).emit('new-user-connect', userData);
     socket.on('disconnect', () => {
       console.log('user-disconnected', userID);
-      socket.to(roomID).emit('user-disconnected', userID);
+      io.to(roomID).emit('user-disconnected', userID);
     });
     socket.on('broadcast-message', (message) => {
-      socket
-        .to(roomID)
-        .emit('new-broadcast-messsage', { ...message, userData });
+      io.to(roomID).emit('new-broadcast-messsage', {
+        ...message,
+        timeStamp: getTimeStamp(),
+        userData,
+      });
     });
     /*
      * socket.on('reconnect-user', () => {
