@@ -1,7 +1,5 @@
-import bcrypt from 'bcryptjs';
 import { Organization } from '../models/organization';
 import { responseHandler } from '../utils/responseHandler';
-import userService from '../services/user';
 
 /**
  * POST `/api/v1/user/login`
@@ -28,7 +26,7 @@ export const deleteOrganization = async (req, res) => {
   try {
     const { orgId } = req.body;
     const org = await Organization.findById(orgId);
-    if (org.admin != req.user.id) {
+    if (org.admin !== req.user.id) {
       responseHandler(req, res, 403, null);
     } else {
       org.remove();
@@ -43,7 +41,7 @@ export const addMember = async (req, res) => {
   try {
     const { userId, orgId } = req.body;
     const org = await Organization.findById(orgId);
-    if (org.admin != req.user.id) {
+    if (org.admin !== req.user.id) {
       responseHandler(req, res, 403, null);
     } else if (org.members.includes(userId)) {
       responseHandler(req, res, 400, null, 'Already a member');
@@ -61,12 +59,12 @@ export const removeMember = async (req, res) => {
   try {
     const { userId, orgId } = req.body;
     const org = await Organization.findById(orgId);
-    if (org.admin != req.user.id) {
+    if (org.admin !== req.user.id) {
       responseHandler(req, res, 403, null);
     } else if (!org.members.includes(userId)) {
       responseHandler(req, res, 404, null, 'Not a member');
     } else {
-      org.members = org.members.filter((member) => member != userId);
+      org.members = org.members.filter((member) => member !== userId);
       await org.save();
       responseHandler(req, res, 200, null, null);
     }

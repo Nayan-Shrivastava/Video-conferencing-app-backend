@@ -44,7 +44,6 @@ export const responseHandler = async (req, res, code, error, message) => {
     }
     // throw new Error();
   } catch (err) {
-    console.log(err);
     logger.error(err);
   }
 };

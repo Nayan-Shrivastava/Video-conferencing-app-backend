@@ -69,7 +69,7 @@ import('./routes').then(({ rootRouter }) => {
   app._router.stack.forEach(printRoutes.bind(null, []));
 });
 
-const server = PeerServer({ port: 4430 });
+PeerServer({ port: 4430 });
 httpSever.listen(config.port, () => {
   logger.log('info', `Server is Listening on port ${config.port}`);
 });

@@ -8,10 +8,8 @@ const io = getIO();
 meetRouter.get('/create', createNewMeet);
 
 io.on('connection', (socket) => {
-  console.log('socket established');
   socket.on('join-room', (userData) => {
     const { roomID, userID } = userData;
-    console.log('new user joined', userData);
     socket.join(roomID);
     socket.to(roomID).emit('new-user-connect', userData);
     socket.on('disconnect', () => {
