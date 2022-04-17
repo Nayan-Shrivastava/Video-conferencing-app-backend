@@ -13,11 +13,10 @@ io.on('connection', (socket) => {
     socket.join(roomID);
     socket.to(roomID).emit('new-user-connect', userData);
     socket.on('disconnect', () => {
-      console.log('user-disconnected', userID);
-      io.to(roomID).emit('user-disconnected', userID);
+      socket.to(roomID).emit('user-disconnected', userID);
     });
     socket.on('broadcast-message', (message) => {
-      io.to(roomID).emit('new-broadcast-messsage', {
+      socket.to(roomID).emit('new-broadcast-messsage', {
         ...message,
         timeStamp: getTimeStamp(),
         userData,
@@ -28,14 +27,18 @@ io.on('connection', (socket) => {
      *     socket.to(roomID).broadcast.emit('new-user-connect', userData);
      * });
      */
+
     /*
      * socket.on('display-media', (value) => {
      *   socket.to(roomID).broadcast.emit('display-media', { userID, value });
      * });
-     * socket.on('user-video-off', (value) => {
-     *   socket.to(roomID).broadcast.emit('user-video-off', value);
-     * });
      */
+    socket.on('video-off', (id) => {
+      socket.to(roomID).emit('toggle-video', { id, status: { video: false } });
+    });
+    socket.on('video-on', (id) => {
+      socket.to(roomID).emit('toggle-video', { id, status: { video: true } });
+    });
   });
 });
 export { meetRouter };
