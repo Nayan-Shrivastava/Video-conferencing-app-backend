@@ -23,6 +23,13 @@ const userSchema = new Schema(
       trim: true,
       type: String,
     },
+    organizations: [
+      {
+        ref: 'Organization',
+        required: true,
+        type: Schema.Types.ObjectId,
+      },
+    ],
     password: {
       minlength: 8,
       trim: true,
