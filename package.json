@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "express-jwt": "^6.1.1",
@@ -67,7 +68,7 @@
     "pre-commit": "lint-staged",
     "prepare": "husky install",
     "prettier": "prettier --write src/",
-    "start": "node dist/index.js",
+    "start": "npm-run-all clean tsc && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc": "tsc"
   },
