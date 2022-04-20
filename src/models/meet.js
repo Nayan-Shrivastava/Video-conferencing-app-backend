@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose';
 
-const MeetingTypes = {
+export const MeetingTypes = {
   OPEN_TO_ALL: 0,
   ORGANIZATION: 2,
   RESTRICTED: 1,
