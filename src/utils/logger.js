@@ -2,10 +2,13 @@ import { format, createLogger, transports } from 'winston';
 
 const { timestamp, combine, errors, printf } = format;
 
-const logFormat = printf(
-  ({ level, timestamp, message, stack }) =>
-    `${timestamp}  ${level}  ${message || stack}`,
-);
+const logFormat = printf(({ level, timestamp, message, stack }) => {
+  const log = `${timestamp}  ${level}  ${message || stack}`;
+  const logmap = { error: 'error', info: 'log', warn: 'warn' };
+  // eslint-disable-next-line
+  console[logmap[level]]?.(log);
+  return log;
+});
 
 const loghelper = createLogger({
   format: combine(
