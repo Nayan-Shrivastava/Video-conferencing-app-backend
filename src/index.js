@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import { createServer } from 'http';
 import { PeerServer } from 'peer';
 import config from './configs';
@@ -11,6 +12,7 @@ const httpSever = createServer(app);
 initializeSocket(httpSever);
 
 app.use(express.json());
+app.use(cors());
 app.use((req, res, next) => {
   const { origin } = req.headers;
   if (origin) res.setHeader('Access-Control-Allow-Origin', origin);
@@ -25,9 +27,7 @@ mongoose.connect(config.mongoDBUrl, {
   useUnifiedTopology: true,
 });
 
-app.get('/', (_, res) =>
-  res.send('Video Conference Web App backend.\nhealth check : passing'),
-);
+app.get('/', (_, res) => res.send('Video Conference Web App backend.\nhealth check : passing'));
 
 function split(thing) {
   if (typeof thing === 'string') {
