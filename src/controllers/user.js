@@ -15,14 +15,24 @@ export const login = async (req, res) => {
     const { email: userEmail, password } = req.body;
     const user = await userService.findByCredentials(userEmail, password);
     const token = await userService.generateAuthToken(user);
-    const { _id, email, name, createdAt } = user;
-    const message = { _id, createdAt, email, name, success: true, token };
+    const message = { ...user._doc, success: true, token };
     responseHandler(req, res, 200, null, message);
   } catch (e) {
     responseHandler(req, res, 400, e);
   }
 };
 
+export const updateProfilePicture = async (req, res) => {
+  try {
+    const { imageUrl } = req.body;
+    req.user.imageUrl = imageUrl;
+    await req.user.save();
+    console.log(req.user);
+    responseHandler(req, res, 200, null, { user: req.user });
+  } catch (e) {
+    responseHandler(req, res, 500, e);
+  }
+};
 /**
  * POST `/api/v1/user/signup`
  * @example
@@ -115,15 +125,35 @@ export const getAllUsers = async (req, res) => {
  *  token: 'eowefuUerldfmwle.ekrowmkfsUerd.....f.owUiefdwlerlesdurews'
  * }
  */
+
 export const loginWithGoogle = async (req, res) => {
   try {
-    const { email, name, imageUrl, token } = req.body;
-    const user = await User.findOneAndUpdate(
-      { email },
-      { $push: { tokens: token }, email, imageUrl, name },
-    );
+    const {
+      email, name, imageUrl, token, 
+    } = req.body;
+    let user = await User.findOne({ email });
+    if (user) {
+      user = await User.findOneAndUpdate(
+        { email },
+        {
+          $push: { tokens: { token } },
+          email,
+          imageUrl,
+          name,
+        },
+      );
+    } else {
+      user = new User({
+        email,
+        imageUrl,
+        name,
+        tokens: [{ token }],
+      });
+      await user.save();
+    }
     responseHandler(req, res, 200, null, { user });
   } catch (e) {
+    console.log(e);
     responseHandler(req, res, 500, e);
   }
 };

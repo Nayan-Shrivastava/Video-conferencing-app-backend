@@ -1,8 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import { createServer } from 'http';
 import { ExpressPeerServer } from 'peer';
-import cors from 'cors';
 import config from './configs';
 import { logger } from './utils/logger';
 import { initializeSocket } from './socketInstance';
@@ -12,16 +12,15 @@ const httpSever = createServer(app);
 initializeSocket(httpSever);
 
 app.use(express.json());
-app.use(
-  cors({
-    allowedHeaders: ['Content-Type'],
-    credentials: true,
-    methods: 'GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE',
-    origin: (o, cb) => {
-      cb(null, true);
-    },
-  }),
-);
+app.use(cors());
+app.use((req, res, next) => {
+  const { origin } = req.headers;
+  if (origin) res.setHeader('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
+});
 
 mongoose.connect(config.mongoDBUrl, {
   useNewUrlParser: true,

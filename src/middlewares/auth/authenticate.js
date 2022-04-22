@@ -1,7 +1,11 @@
+/* eslint-disable require-atomic-updates */
 import { verify } from 'jsonwebtoken';
+import dotenv from 'dotenv';
 import { responseHandler } from '../../utils/responseHandler';
 import { User } from '../../models/user';
 import config from '../../configs/index';
+
+dotenv.config();
 
 export const authenticate = async (req, res, next) => {
   try {
@@ -11,7 +15,6 @@ export const authenticate = async (req, res, next) => {
     const user = await User.findOne({
       _id: decoded._id,
     });
-
     if (!user) {
       responseHandler(req, res, 404);
     }
