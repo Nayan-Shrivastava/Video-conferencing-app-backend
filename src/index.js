@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import { createServer } from 'http';
-import { PeerServer } from 'peer';
+import { ExpressPeerServer } from 'peer';
 import config from './configs';
 import { logger } from './utils/logger';
 import { initializeSocket } from './socketInstance';
@@ -69,7 +69,10 @@ import('./routes').then(({ rootRouter }) => {
   app._router.stack.forEach(printRoutes.bind(null, []));
 });
 
-const server = PeerServer({ port: 4430 });
+app.use(
+  '/peerjs',
+  ExpressPeerServer(httpSever, { allow_discovery: true, debug: true }),
+);
 httpSever.listen(config.port, () => {
   logger.log('info', `Server is Listening on port ${config.port}`);
 });

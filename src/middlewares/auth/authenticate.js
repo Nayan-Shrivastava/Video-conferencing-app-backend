@@ -1,5 +1,5 @@
 /* eslint-disable require-atomic-updates */
-import { verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { responseHandler } from '../../utils/responseHandler';
 import { User } from '../../models/user';
@@ -10,7 +10,10 @@ dotenv.config();
 export const authenticate = async (req, res, next) => {
   try {
     const token = req.header('Authorization').replace('Bearer ', '');
-    const decoded = verify(token, config.jwtSecret);
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET ?? config.jwtSecret,
+    );
     // TODO: need to modify auth token to include _id
     const user = await User.findOne({
       _id: decoded._id,

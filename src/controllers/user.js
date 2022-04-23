@@ -48,7 +48,9 @@ export const createUser = async (req, res) => {
     const password = await bcrypt.hash(req.body.password, 8);
     const user = new User({ email, name, password });
     await user.save();
-    responseHandler(req, res, 200, null, null);
+    const token = await userService.generateAuthToken(user);
+    const message = { ...user._doc, success: true, token };
+    responseHandler(req, res, 200, null, message);
   } catch (e) {
     responseHandler(req, res, 400, e);
   }
@@ -151,7 +153,9 @@ export const loginWithGoogle = async (req, res) => {
       });
       await user.save();
     }
-    responseHandler(req, res, 200, null, { user });
+    const jwtToken = await userService.generateAuthToken(user);
+    const message = { ...user._doc, success: true, token: jwtToken };
+    responseHandler(req, res, 200, null, message);
   } catch (e) {
     console.log(e);
     responseHandler(req, res, 500, e);

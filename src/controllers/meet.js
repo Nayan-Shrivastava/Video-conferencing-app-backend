@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from 'nanoid';
 import { Meet, MeetingTypes } from '../models/meet';
 import { responseHandler } from '../utils/responseHandler';
 
@@ -6,19 +6,21 @@ export const createNewMeet = async (req, res) => {
   const { type, title } = req.body;
   let { orgId } = req.body;
   try {
-    const meetingCode = uuidv4();
+    const meetingCode = nanoid(9);
     if (type !== MeetingTypes.ORGANIZATION) orgId = null;
-    const meet = new Meet({
-      host: req.user.id,
+    let meet = new Meet({
+      host: req.user._id,
       meetingCode,
       orgId,
       title,
       type,
     });
-    await meet.save();
+    meet = await meet.save();
+    console.log(meet);
     responseHandler(req, res, 200, null, meet);
   } catch (error) {
-    responseHandler(req, res, 400);
+    console.log(error);
+    responseHandler(req, res, 400, error);
   }
 };
 

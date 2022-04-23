@@ -55,7 +55,7 @@ const meetSchema = new Schema(
       type: String,
     },
     type: {
-      default: MeetingTypes.OPEN_TO_ALL,
+      type: Number,
     },
   },
   {
